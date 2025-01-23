@@ -56,3 +56,63 @@ header {
     }
   }
 }
+
+.snippet {
+  max-width: 900px;
+  background-color: white;
+  border: 1px solid grey;
+
+  .metadata {
+    padding: 10px;
+    background-color: #ededed;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  pre {
+    padding: 10px;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse; /* Removes gaps between borders */
+  margin: 20px 0; /* Adds spacing above and below the table */
+  font-size: 16px;
+  text-align: left;
+}
+
+th,
+td {
+  padding: 12px 15px; /* Adds spacing within cells */
+  border: 1px solid #ddd; /* Adds a light border around cells */
+}
+
+th {
+  background-color: #f4f4f4; /* Light background for the header row */
+  font-weight: bold; /* Makes the header text bold */
+}
+
+tr:nth-child(odd) {
+  background-color: #f9f9f9; /* Light grey for odd rows */
+}
+
+tr:nth-child(even) {
+  background-color: #ffffff; /* White for even rows */
+}
+
+tr:hover {
+  background-color: #f1f1f1; /* Slight highlight on hover for better UX */
+  cursor: pointer; /* Changes cursor to pointer on hover */
+}
+
+a {
+  color: #007bff; /* Link color */
+  text-decoration: none; /* Removes underline from links */
+}
+
+a:hover {
+  text-decoration: underline; /* Adds underline on hover for links */
+}
