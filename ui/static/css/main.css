@@ -71,6 +71,7 @@ header {
 
   pre {
     padding: 10px;
+    text-wrap: auto;
     border-top: 1px solid grey;
     border-bottom: 1px solid grey;
   }
@@ -170,4 +171,18 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
   background-color: #0056b3;
+}
+
+label.error {
+  color: red;
+  font-size: 0.7em;
+  font-weight: 200;
+}
+
+.flash {
+  margin: 20px 0;
+  background-color: deepskyblue;
+  padding: 5px;
+  border-radius: 5px;
+  color: white;
 }

@@ -7,23 +7,28 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/AyanDas-99/snippetbox/internal/models"
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
+	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type application struct {
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	snippets      *models.SnippetModel
-	templateCache map[string]*template.Template
+	errorLog       *log.Logger
+	infoLog        *log.Logger
+	snippets       *models.SnippetModel
+	templateCache  map[string]*template.Template
+	formDecoder    *form.Decoder
+	sessionManager *scs.SessionManager
 }
 
 func main() {
 	//Define cmd-line flag with name 'addr', with defualt value of ":4000"
 
 	addr := flag.String("addr", ":4000", "Http network address")
-
 	//Data source name for db connection
 	dsn := flag.String("dns", "web:password@/snippetbox?parseTime=true", "Mysql data source name")
 	flag.Parse()
@@ -46,11 +51,18 @@ func main() {
 		errLog.Fatal(err)
 	}
 
+	sessionManager := scs.New()
+	sessionManager.Store = mysqlstore.New(db)
+	sessionManager.Lifetime = 12 * time.Hour
+	sessionManager.Cookie.Secure = true
+
 	app := application{
-		errorLog:      errLog,
-		infoLog:       infoLog,
-		snippets:      &models.SnippetModel{db},
-		templateCache: templaceCache,
+		errorLog:       errLog,
+		infoLog:        infoLog,
+		snippets:       &models.SnippetModel{db},
+		templateCache:  templaceCache,
+		formDecoder:    form.NewDecoder(),
+		sessionManager: sessionManager,
 	}
 
 	srv := http.Server{
@@ -59,7 +71,8 @@ func main() {
 		Handler:  app.routes(),
 	}
 	infoLog.Printf("Starting server on %s", *addr)
-	err = srv.ListenAndServe()
+	// Starting HTTPS server, we pass the tls key and certificate
+	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
 	errLog.Fatal(err)
 }
 
