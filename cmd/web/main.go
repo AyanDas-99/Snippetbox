@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -20,6 +21,7 @@ type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       *models.SnippetModel
+	users          *models.UserModel
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
@@ -59,16 +61,24 @@ func main() {
 	app := application{
 		errorLog:       errLog,
 		infoLog:        infoLog,
-		snippets:       &models.SnippetModel{db},
+		snippets:       &models.SnippetModel{DB: db},
+		users:          &models.UserModel{DB: db},
 		templateCache:  templaceCache,
 		formDecoder:    form.NewDecoder(),
 		sessionManager: sessionManager,
 	}
 
+	// config to hold non-default TLS settings
+	tlsConfig := &tls.Config{CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256}}
+
 	srv := http.Server{
-		Addr:     *addr,
-		ErrorLog: errLog,
-		Handler:  app.routes(),
+		Addr:         *addr,
+		ErrorLog:     errLog,
+		Handler:      app.routes(),
+		TLSConfig:    tlsConfig,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Minute,
+		WriteTimeout: 10 * time.Minute,
 	}
 	infoLog.Printf("Starting server on %s", *addr)
 	// Starting HTTPS server, we pass the tls key and certificate

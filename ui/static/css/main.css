@@ -28,8 +28,32 @@ footer {
 nav {
   background-color: white;
   margin: 20px 0 20px 0;
-  /* padding: 5px; */
+  display: flex;
+  justify-content: space-between;
+
+  a {
+    padding: 0 15px;
+  }
+
+  form {
+    display: inline;
+    border: none;
+    background: none;
+    padding: 0;
+
+    button {
+      color: #007bff;
+      background: none;
+      border: none;
+      padding: 0 15px;
+    }
+
+    button:hover {
+      text-decoration: underline;
+    }
+  }
 }
+
 a {
   text-decoration: none;
 }
@@ -139,6 +163,8 @@ label {
 }
 
 input[type="text"],
+input[type="email"],
+input[type="password"],
 textarea {
   width: 100%;
   padding: 8px;
