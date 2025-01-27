@@ -1,9 +1,11 @@
 package main
 
 import (
+	"net/http"
+
+	"github.com/AyanDas-99/snippetbox/ui"
 	"github.com/julienschmidt/httprouter"
 	"github.com/justinas/alice"
-	"net/http"
 )
 
 func (app *application) routes() http.Handler {
@@ -19,11 +21,11 @@ func (app *application) routes() http.Handler {
 	})
 
 	// All static files
-	fileServer := http.FileServer(http.Dir("./ui/static/"))
-	router.Handler(http.MethodGet, "/static/*filepath", http.StripPrefix("/static", fileServer))
+	fileServer := http.FileServer(http.FS(ui.Files))
+	router.Handler(http.MethodGet, "/static/*filepath", fileServer)
 
 	// Middleware chain for session manager
-	dynamic := alice.New(app.sessionManager.LoadAndSave)
+	dynamic := alice.New(app.sessionManager.LoadAndSave, noSurf, app.authenticate)
 
 	// Routes
 	router.Handler(http.MethodGet, "/", dynamic.ThenFunc(app.home))
