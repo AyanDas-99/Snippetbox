@@ -22,6 +22,9 @@ func (app *application) routes() http.Handler {
 
 	// All static files
 	fileServer := http.FileServer(http.FS(ui.Files))
+
+	router.HandlerFunc(http.MethodGet, "/ping", ping)
+
 	router.Handler(http.MethodGet, "/static/*filepath", fileServer)
 
 	// Middleware chain for session manager
